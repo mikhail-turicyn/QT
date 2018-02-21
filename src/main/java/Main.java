@@ -10,6 +10,8 @@ import org.jfree.data.statistics.HistogramType;
 
 import javax.swing.*;
 import java.awt.*;
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.Random;
 
 import static org.jfree.data.statistics.HistogramType.RELATIVE_FREQUENCY;
@@ -17,20 +19,24 @@ import static org.jfree.data.statistics.HistogramType.SCALE_AREA_TO_1;
 
 public class Main {
 
-    private static final int SPLITCNT = 20;
-    private static double[] data = new double[1000];
+    private static final int SPLITCNT = 4;
+    private static double[] data = {9.5,9.03,9.9,7.6,7.7,8.9,8.01,7.6,7.9,7.5,6.6,6.3,5.5,3.3,2.1,1.1,1.11,1.2,1.9};
 
     public static void main(String[] args){
-       // System.out.println(FractalEstimation.rMetric(12,23,2));
-        Random r = new Random();
-        for (int i = 0; i < 1000; i++) {
-            data[i] = r.nextGaussian();
-//            System.out.println(data[i]);
+//        Random r = new Random();
+//        for (int i = 0; i < 10; i++) {
+//            data[i] = r.nextGaussian();
+//        }
+        FractalEstimation fr = new FractalEstimation(data, SPLITCNT);
+        double[] ar = fr.getProbArray();
+        for (double el:ar) {
+            System.out.println(el);
         }
         HistogramDataset dataset = new HistogramDataset();
-//        HistogramType hType =  RELATIVE_FREQUENCYSCALE_AREA_TO_1;
+//        HistogramType hType =  RELATIVE_FREQUENCY SCALE_AREA_TO_1;
         dataset.setType(RELATIVE_FREQUENCY);
-        dataset.addSeries("series label",data,SPLITCNT);
+//        dataset.addSeries("series label",data,SPLITCNT);
+        dataset.addSeries("series label",ar,SPLITCNT);
         JFreeChart chart = ChartFactory.
                 createHistogram( "plotTitle", "xaxis label", "yaxis label",
                 dataset, PlotOrientation.VERTICAL, false, false, false);

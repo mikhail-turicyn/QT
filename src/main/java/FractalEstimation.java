@@ -1,24 +1,43 @@
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class FractalEstimation {
     private double epsilon;
     private double[] data;
     int splitCnt;
+    double max;
+    double min;
 
     private FractalEstimation(){}
 
     public FractalEstimation(double[] data, int splitCnt){
         this.data = data;
         this.splitCnt = splitCnt;
-        this.epsilon = (getMaximum()-getMinimum())/splitCnt;
+        max = getMaximum();
+        min = getMinimum();
+        this.epsilon = (max - min)/splitCnt;
     }
 
     public FractalEstimation(double[] data, double epsilon){
         this.data = data;
         this.epsilon = epsilon;
         this.splitCnt = (int)((getMaximum()-getMinimum())/epsilon);
+    }
+
+    public double bEntropy(){
+        double tmpVal = 0;
+        double res = 0;
+        for (int i = 0; i < splitCnt; i++) {
+            for (int j = 0; j < splitCnt; j++) {
+                tmpVal = (1 - rMetric( data[i] , data[j], data.length)) * getP(j);
+            }
+            res += getP(i) * Math.log(tmpVal);
+        }
+        return res/ Math.log(epsilon);
     }
 
     private double probability(){
@@ -28,22 +47,19 @@ public class FractalEstimation {
         return 0;
     }
 
-    public double bEntropy(){
-        double tmpVal = 0;
-        double res = 0;
-        for (int i = 0; i < splitCnt; i++) {
-            for (int j = 0; j < splitCnt; j++) {
-                tmpVal = (1 - rMetric( data[i] , data[j], data.length)) * getP( j);
-            }
-            res += getP(i) * Math.log(tmpVal);
+    public double[] getProbArray(){
+        double[] res = new double[splitCnt];
+        int curInt = 0;
+        Arrays.sort(data);
+        for (double el:data) {
+            if(el < min + epsilon*(curInt)){
+                 res[curInt] += 1;
+             } else {
+//                res[curInt] = res[curInt]/data.length;
+                curInt += 1;
+                res[curInt] += 1;
+             }
         }
-        return res/ Math.log(epsilon);
-    }
-    private List getProbArray(ArrayList data, int i){
-        List res = new ArrayList();
-        data.stream()
-                .sorted()
-                .forEach(el-> System.out.println(el));
         return res;
     }
 
