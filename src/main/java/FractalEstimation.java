@@ -52,7 +52,7 @@ public class FractalEstimation {
         int curInt = 0;
         Arrays.sort(data);
         for (double el:data) {
-            if(el < min + epsilon*(curInt)){
+            if(el <= min + epsilon*(curInt+1)){
                  res[curInt] += 1;
              } else {
 //                res[curInt] = res[curInt]/data.length;
@@ -60,6 +60,7 @@ public class FractalEstimation {
                 res[curInt] += 1;
              }
         }
+        res[curInt] = res[curInt]/data.length;
         return res;
     }
 
