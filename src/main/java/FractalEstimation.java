@@ -1,8 +1,8 @@
+import org.jfree.chart.util.Args;
+import org.jfree.data.statistics.HistogramBin;
+
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class FractalEstimation {
@@ -11,6 +11,8 @@ public class FractalEstimation {
     int splitCnt;
     double max;
     double min;
+    List list;
+    Map map = new HashMap();
 
     private FractalEstimation(){}
 
@@ -31,11 +33,12 @@ public class FractalEstimation {
     public double bEntropy(){
         double tmpVal = 0;
         double res = 0;
+        double[] prob = getProbArray();
         for (int i = 0; i < splitCnt; i++) {
             for (int j = 0; j < splitCnt; j++) {
-                tmpVal = (1 - rMetric( data[i] , data[j], data.length)) * getP(j);
+                tmpVal = (1 - rMetric( data[i] , data[j], data.length)) * prob[j];
             }
-            res += getP(i) * Math.log(tmpVal);
+            res += prob[i] * Math.log(tmpVal);
         }
         return res/ Math.log(epsilon);
     }
@@ -52,16 +55,73 @@ public class FractalEstimation {
         int curInt = 0;
         Arrays.sort(data);
         for (double el:data) {
-            if(el <= min + epsilon*(curInt+1)){
+            if(el <= min + (double)(curInt+1)*epsilon){
                  res[curInt] += 1;
              } else {
-//                res[curInt] = res[curInt]/data.length;
+                res[curInt] = res[curInt]/data.length;
                 curInt += 1;
                 res[curInt] += 1;
              }
         }
         res[curInt] = res[curInt]/data.length;
         return res;
+    }
+
+    public void addSeries(Comparable key, double[] values, int bins) {
+
+        Args.nullNotPermitted(key, "key");
+        Args.nullNotPermitted(values, "values");
+        if (bins < 1) {
+            throw new IllegalArgumentException(
+                    "The 'bins' value must be at least 1.");
+        }
+        double binWidth = (max - min) / bins;
+
+        double lower = min;
+        double upper;
+        List binList = new ArrayList(bins);
+        for (int i = 0; i < bins; i++) {
+            HistogramBin bin;
+            // make sure bins[bins.length]'s upper boundary ends at maximum
+            // to avoid the rounding issue. the bins[0] lower boundary is
+            // guaranteed start from min
+            if (i == bins - 1) {
+                bin = new HistogramBin(lower, max);
+            }
+            else {
+                upper = min + (i + 1) * binWidth;
+                bin = new HistogramBin(lower, upper);
+                lower = upper;
+            }
+            binList.add(bin);
+        }
+        // fill the bins
+        for (int i = 0; i < values.length; i++) {
+            int binIndex = bins - 1;
+            if (values[i] < max) {
+                double fraction = (values[i] - min) / (max - min);
+                if (fraction < 0.0) {
+                    fraction = 0.0;
+                }
+                binIndex = (int) (fraction * bins);
+                // rounding could result in binIndex being equal to bins
+                // which will cause an IndexOutOfBoundsException - see bug
+                // report 1553088
+                if (binIndex >= bins) {
+                    binIndex = bins - 1;
+                }
+            }
+            HistogramBin bin = (HistogramBin) binList.get(binIndex);
+            bin.incrementCount();
+        }
+        // generic map for each series
+//        Map map = new HashMap();
+        map.put("key", key);
+        map.put("bins", binList);
+        map.put("values.length", new Integer(values.length));
+        map.put("bin width", new Double(binWidth));
+//        this.list.add(map);
+//        fireDatasetChanged();
     }
 
     private double getP( int i){return 0;}
