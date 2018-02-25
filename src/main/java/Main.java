@@ -28,36 +28,36 @@ import static org.jfree.data.statistics.HistogramType.SCALE_AREA_TO_1;
 
 public class Main extends JFrame{
 
-    private static final int SPLITCNT = 400;
+    private static final int SPLITCNT = 40000;
 //    private static double[] arr = {9.5,9.03,9.9,7.6,7.7,8.9,8.01,7.6,7.9,7.5,6.6,6.3,5.5,3.3,2.1,1.1,1.11,1.2,1.9};
     private static double[] arr;
 
     public static void main(String[] args){
         JFrame f = new JFrame();
-        JFileChooser jf = new JFileChooser();
-        int foRes = jf.showOpenDialog(f);
-        if(foRes == JFileChooser.APPROVE_OPTION) {
-            try {
-                System.out.println(jf.getSelectedFile().toPath());
-                arr = Files.lines(jf.getSelectedFile().toPath()).mapToDouble(val -> Double.parseDouble(val)).toArray();
-                for (double el:arr) {
-                    System.out.println(el);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
-            System.err.println("Пожалуйста выберите файл с входными данными!");
-            JOptionPane.showMessageDialog(null, "Пожалуйста выберите файл с входными данными!");
-            System.exit(1);
-        }
-//      _________________________________________________________________________________________________________________________
-//        try {
-//            arr = Files.lines(Paths.get("/home/eq/Документы/log.csv"))
-//                    .mapToDouble(val -> Double.parseDouble(val)).toArray();
-//        } catch (IOException e) {
-//            e.printStackTrace();
+//        JFileChooser jf = new JFileChooser();
+//        int foRes = jf.showOpenDialog(f);
+//        if(foRes == JFileChooser.APPROVE_OPTION) {
+//            try {
+//                System.out.println(jf.getSelectedFile().toPath());
+//                arr = Files.lines(jf.getSelectedFile().toPath()).mapToDouble(val -> Double.parseDouble(val)).toArray();
+//                for (double el:arr) {
+//                    System.out.println(el);
+//                }
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        } else {
+//            System.err.println("Пожалуйста выберите файл с входными данными!");
+//            JOptionPane.showMessageDialog(null, "Пожалуйста выберите файл с входными данными!");
+//            System.exit(1);
 //        }
+//      _________________________________________________________________________________________________________________________
+        try {
+            arr = Files.lines(Paths.get("/home/eq/Документы/log.csv"))
+                    .mapToDouble(val -> Double.parseDouble(val)).toArray();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 //      _________________________________________________________________________________________________________________________
         FractalEstimation fr = new FractalEstimation(arr, SPLITCNT);
         double[] ar = fr.getProbArray();
@@ -67,7 +67,9 @@ public class Main extends JFrame{
 //        }
         System.out.println("B entropy " + fr.bEntropy());
         fr.addSeries("origData",arr,SPLITCNT);
-        System.out.println("Eurica " + fr.map.get("bins"));
+
+//        System.out.println("Eurica " + fr.map.get("bins"));
+
         HistogramDataset dataset = new HistogramDataset();
 //        HistogramType hType =  RELATIVE_FREQUENCY SCALE_AREA_TO_1 FREQUENCY;
         dataset.setType(RELATIVE_FREQUENCY);
