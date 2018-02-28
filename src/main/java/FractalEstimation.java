@@ -1,9 +1,7 @@
 import org.jfree.chart.util.Args;
 import org.jfree.data.statistics.HistogramBin;
 
-import java.lang.reflect.Array;
 import java.util.*;
-import java.util.function.Consumer;
 
 public class FractalEstimation {
     private double epsilon;
@@ -36,19 +34,12 @@ public class FractalEstimation {
         double[] prob = getProbArray();
         for (int i = 0; i < splitCnt; i++) {
             for (int j = 0; j < splitCnt; j++) {
-                tmpVal += (1 - rMetric(prob, i, j)) * prob[j];
+                tmpVal += (1 - rMetric(i, j)) * prob[j];
             }
             res += prob[i] * Math.log(tmpVal);
         }
         return res/ Math.log(epsilon);
     }
-
-//    private double probability(){
-//        for (int i = 0; i < splitCnt; i++) {
-//
-//        }
-//        return 0;
-//    }
 
     public double[] getProbArray(){
         double[] res = new double[splitCnt];
@@ -126,9 +117,8 @@ public class FractalEstimation {
 
     private double getP( int i){return 0;}
 
-    private double rMetric(double[] arr,int i, int j){
-//        min + (double)(curInt+1)*epsilon
-        return Math.abs(arr[i]-arr[j])/epsilon;
+    private double rMetric(int curInt, int prevInt) {
+        return epsilon * (curInt - prevInt) / (max - min);
     }
 
     private double getMinimum() {
@@ -160,7 +150,5 @@ public class FractalEstimation {
             throw new IllegalArgumentException("Null or zero length 'data' argument.");
         }
     }
-
-
 
 }
