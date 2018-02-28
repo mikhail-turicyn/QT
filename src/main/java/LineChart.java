@@ -5,8 +5,8 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.ui.ApplicationFrame;
 import org.jfree.data.category.DefaultCategoryDataset;
 
-public class LineChart extends ApplicationFrame {
-    public LineChart(double[] data, String applicationTitle, String chartTitle) {
+class LineChart extends ApplicationFrame {
+    LineChart(double[] data, String applicationTitle, String chartTitle) {
         super(applicationTitle);
         JFreeChart lineChart = ChartFactory.createLineChart(
                 chartTitle,

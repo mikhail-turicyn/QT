@@ -6,13 +6,10 @@ import java.util.*;
 public class FractalEstimation {
     private double epsilon;
     private double[] data;
-    int splitCnt;
-    double max;
-    double min;
-    List list;
-    Map map = new HashMap();
-
-    private FractalEstimation(){}
+    private int splitCnt;
+    private double max;
+    private double min;
+    private List<Map<String, Object>> list;
 
     public FractalEstimation(double[] data, int splitCnt){
         this.data = data;
@@ -28,7 +25,7 @@ public class FractalEstimation {
         this.splitCnt = (int)((getMaximum()-getMinimum())/epsilon);
     }
 
-    public double bEntropy(){
+    double bEntropy() {
         double tmpVal = 0;
         double res = 0;
         double[] prob = getProbArray();
@@ -41,7 +38,7 @@ public class FractalEstimation {
         return res/ Math.log(epsilon);
     }
 
-    public double[] getProbArray(){
+    private double[] getProbArray() {
         double[] res = new double[splitCnt];
         int curInt = 0;
         Arrays.sort(data);
@@ -70,7 +67,7 @@ public class FractalEstimation {
 
         double lower = min;
         double upper;
-        List binList = new ArrayList(bins);
+        List<HistogramBin> binList = new ArrayList<>(bins);
         for (int i = 0; i < bins; i++) {
             HistogramBin bin;
             // make sure bins[bins.length]'s upper boundary ends at maximum
@@ -87,10 +84,10 @@ public class FractalEstimation {
             binList.add(bin);
         }
         // fill the bins
-        for (int i = 0; i < values.length; i++) {
+        for (double value : values) {
             int binIndex = bins - 1;
-            if (values[i] < max) {
-                double fraction = (values[i] - min) / (max - min);
+            if (value < max) {
+                double fraction = (value - min) / (max - min);
                 if (fraction < 0.0) {
                     fraction = 0.0;
                 }
@@ -102,20 +99,18 @@ public class FractalEstimation {
                     binIndex = bins - 1;
                 }
             }
-            HistogramBin bin = (HistogramBin) binList.get(binIndex);
+            HistogramBin bin = binList.get(binIndex);
             bin.incrementCount();
         }
         // generic map for each series
-//        Map map = new HashMap();
+        Map<String, Object> map = new HashMap<>();
         map.put("key", key);
         map.put("bins", binList);
-        map.put("values.length", new Integer(values.length));
-        map.put("bin width", new Double(binWidth));
-//        this.list.add(map);
+        map.put("values.length", values.length);
+        map.put("bin width", binWidth);
+        this.list.add(map);
 //        fireDatasetChanged();
     }
-
-    private double getP( int i){return 0;}
 
     private double rMetric(int curInt, int prevInt) {
         return epsilon * (curInt - prevInt) / (max - min);
@@ -125,9 +120,9 @@ public class FractalEstimation {
         if (data != null && data.length >= 1) {
             double min = 1.7976931348623157E308D;
 
-            for(int i = 0; i < data.length; ++i) {
-                if (data[i] < min) {
-                    min = data[i];
+            for (double aData : data) {
+                if (aData < min) {
+                    min = aData;
                 }
             }
             return min;
@@ -140,9 +135,9 @@ public class FractalEstimation {
         if (data != null && data.length >= 1) {
             double max = -1.7976931348623157E308D;
 
-            for(int i = 0; i < data.length; ++i) {
-                if (data[i] > max) {
-                    max = data[i];
+            for (double aData : data) {
+                if (aData > max) {
+                    max = aData;
                 }
             }
             return max;

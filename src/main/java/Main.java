@@ -12,7 +12,7 @@ public class Main extends JFrame{
     private static double[] arr;
 
     public static void main(String[] args){
-        JFrame f = new JFrame();
+//        JFrame f = new JFrame();
 //        JFileChooser jf = new JFileChooser();
 //        int foRes = jf.showOpenDialog(f);
 //        if(foRes == JFileChooser.APPROVE_OPTION) {
@@ -33,7 +33,7 @@ public class Main extends JFrame{
 //      _________________________________________________________________________________________________________________________
         try {
             arr = Files.lines(Paths.get("/home/eq/Документы/log.csv"))
-                    .mapToDouble(val -> Double.parseDouble(val)).toArray();
+                    .mapToDouble(Double::parseDouble).toArray();
         } catch (IOException e) {
             e.printStackTrace();
         }

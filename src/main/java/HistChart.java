@@ -7,8 +7,8 @@ import org.jfree.data.statistics.HistogramDataset;
 
 import static org.jfree.data.statistics.HistogramType.RELATIVE_FREQUENCY;
 
-public class HistChart extends ApplicationFrame {
-    public HistChart(double[] data, int spitCnt, String applicationTitle, String chartTitle) {
+class HistChart extends ApplicationFrame {
+    HistChart(double[] data, int spitCnt, String applicationTitle, String chartTitle) {
         super(applicationTitle);
 
         JFreeChart chart = ChartFactory.
