@@ -38,7 +38,7 @@ public class FractalEstimation {
         return res/ Math.log(epsilon);
     }
 
-    private double[] getProbArray() {
+    public double[] getProbArray() {
         double[] res = new double[splitCnt];
         int curInt = 0;
         Arrays.sort(data);
