@@ -38,10 +38,27 @@ public class FractalEstimation {
         return res/ Math.log(epsilon);
     }
 
+    double bEntropyInf() {
+        double tmpVal = 0;
+        double res = 0;
+        double[] prob = getProbArray();
+        for (int i = 0; i < splitCnt; i++) {
+            for (int j = 0; j < splitCnt; j++) {
+                tmpVal += (1 - Math.abs(prob[i] - prob[j])) * prob[j];
+            }
+            res += prob[i] * Math.log(tmpVal);
+        }
+        return res / Math.log(epsilon);
+    }
+
     public double[] getProbArray() {
         double[] res = new double[splitCnt];
+        double[] tmpData = new double[data.length];
+        for (int i = 0; i < data.length; i++) {
+            tmpData[i] = data[i];
+        }
         int curInt = 0;
-        Arrays.sort(data);
+        Arrays.sort(tmpData);
         for (double el:data) {
             if(el <= min + (double)(curInt+1)*epsilon){
                  res[curInt] += 1;
@@ -113,7 +130,21 @@ public class FractalEstimation {
     }
 
     private double rMetric(int curInt, int prevInt) {
-        return epsilon * (curInt - prevInt) / (max - min);
+//        System.out.println();
+        return Math.abs(epsilon * (curInt - prevInt)) / Math.abs(max - min);
+    }
+
+    public double[] getPerc() {
+        double[] res = new double[data.length];
+        int curr = (int) (data[1] / epsilon);
+        int next;
+        for (int i = 0; i < data.length - 1; i++) {
+            next = (int) (data[i + 1] / epsilon);
+            res[i] = next - curr;
+            curr = next;
+        }
+        res[data.length - 1] = (int) (data[data.length - 1] / epsilon) - (int) (data[1] / epsilon);
+        return res;
     }
 
     private double getMinimum() {
