@@ -53,13 +53,10 @@ public class FractalEstimation {
 
     public double[] getProbArray() {
         double[] res = new double[splitCnt];
-        double[] tmpData = new double[data.length];
-        for (int i = 0; i < data.length; i++) {
-            tmpData[i] = data[i];
-        }
+        double[] tmpData = Arrays.copyOf(data, data.length);
         int curInt = 0;
         Arrays.sort(tmpData);
-        for (double el:data) {
+        for (double el : tmpData) {
             if(el <= min + (double)(curInt+1)*epsilon){
                  res[curInt] += 1;
              } else {
@@ -136,14 +133,14 @@ public class FractalEstimation {
 
     public double[] getPerc() {
         double[] res = new double[data.length];
-        int curr = (int) (data[1] / epsilon);
+        int curr = (int) (data[0] / epsilon);
         int next;
         for (int i = 0; i < data.length - 1; i++) {
             next = (int) (data[i + 1] / epsilon);
-            res[i] = next - curr;
+            res[i] = next;
             curr = next;
         }
-        res[data.length - 1] = (int) (data[data.length - 1] / epsilon) - (int) (data[1] / epsilon);
+        res[data.length - 1] = (int) (data[data.length - 1] / epsilon) - curr;
         return res;
     }
 
