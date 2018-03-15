@@ -1,43 +1,33 @@
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
-import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.ui.ApplicationFrame;
-import org.jfree.data.statistics.HistogramDataset;
 
-import java.io.File;
-import java.io.IOException;
+class HistChart extends Chart {
+    public HistChart(String appTitle,
+                     double[] data,
+                     int spitCnt,
+                     String chartTitle) {
+        this(appTitle, data, spitCnt, chartTitle, "", "", null);
+    }
 
-import static org.jfree.data.statistics.HistogramType.RELATIVE_FREQUENCY;
-
-class HistChart extends ApplicationFrame {
-    HistChart(double[] data, int spitCnt, String applicationTitle, String chartTitle) {
-        super(applicationTitle);
-
+    HistChart(String appTitle,
+              double[] data,
+              int spitCnt,
+              String chartTitle,
+              String xAxisLabel,
+              String yAxisLabel,
+              NumberTickUnit tickUnit) {
+        super(appTitle);
         JFreeChart chart = ChartFactory.
-                createHistogram(chartTitle, "x(t)", "P(x)",
+                createHistogram(chartTitle, xAxisLabel, yAxisLabel,
                         createDataset(data, spitCnt),
                         PlotOrientation.VERTICAL, false, false, false);
 
         ChartPanel chartPanel = new ChartPanel(chart);
         chartPanel.setPreferredSize(new java.awt.Dimension(560, 367));
         setContentPane(chartPanel);
-        int width = 1280;    /* Width of the image */
-        int height = 960;   /* Height of the image */
-        File lineChartFile = new File(applicationTitle + ".jpeg");
-        try {
-            ChartUtils.saveChartAsJPEG(lineChartFile, chart, width, height);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private HistogramDataset createDataset(double[] data, int splitCnt) {
-        HistogramDataset dataset = new HistogramDataset();
-//        HistogramType hType =  RELATIVE_FREQUENCY SCALE_AREA_TO_1 FREQUENCY;
-        dataset.setType(RELATIVE_FREQUENCY);
-        dataset.addSeries("origData", data, splitCnt);
-        return dataset;
+        saveAsFile(chart);
     }
 }

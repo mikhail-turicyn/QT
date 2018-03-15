@@ -4,7 +4,7 @@ import org.jfree.data.statistics.HistogramBin;
 import java.util.*;
 
 public class FractalEstimation {
-    private double epsilon;
+    double epsilon;
     private double[] data;
     private int splitCnt;
     private double max;
@@ -13,16 +13,21 @@ public class FractalEstimation {
 
     public FractalEstimation(double[] data, int splitCnt){
         this.data = data;
-        this.splitCnt = splitCnt;
-        max = getMaximum();
-        min = getMinimum();
-        this.epsilon = (max - min)/splitCnt;
+        setSplitCnt(splitCnt);
     }
 
     public FractalEstimation(double[] data, double epsilon){
         this.data = data;
         this.epsilon = epsilon;
         this.splitCnt = (int)((getMaximum()-getMinimum())/epsilon);
+    }
+
+    public void setSplitCnt(int splitCnt) {
+        this.splitCnt = splitCnt;
+        max = getMaximum();
+        min = getMinimum();
+        this.epsilon = (max - min) / splitCnt;
+
     }
 
     double bEntropy() {
@@ -35,6 +40,7 @@ public class FractalEstimation {
             }
             res += prob[i] * Math.log(tmpVal);
         }
+//        System.out.println("B-entropy geometrical " + -res);
         return res/ Math.log(epsilon);
     }
 
@@ -48,6 +54,7 @@ public class FractalEstimation {
             }
             res += prob[i] * Math.log(tmpVal);
         }
+//        System.out.println("B-entropy inf" + -res);
         return res / Math.log(epsilon);
     }
 
@@ -134,13 +141,13 @@ public class FractalEstimation {
     public double[] getPerc() {
         double[] res = new double[data.length];
         int curr = (int) (data[0] / epsilon);
-        int next;
+        int next = 0;
         for (int i = 0; i < data.length - 1; i++) {
             next = (int) (data[i + 1] / epsilon);
-            res[i] = next;
+            res[i] = next - curr;
             curr = next;
         }
-        res[data.length - 1] = (int) (data[data.length - 1] / epsilon) - curr;
+        res[data.length - 1] = (int) (data[data.length - 1] / epsilon) - (int) (data[0] / epsilon);
         return res;
     }
 
