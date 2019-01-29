@@ -2,7 +2,11 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberTickUnit;
+import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.xy.VectorRenderer;
+import org.jfree.data.xy.VectorSeries;
+import org.jfree.data.xy.VectorSeriesCollection;
+import org.jfree.data.xy.XYDataset;
 
 public class VectorChart extends Chart {
 
@@ -31,15 +35,24 @@ public class VectorChart extends Chart {
                                    String yAxisLabel) {
         JFreeChart chart = ChartFactory.
                 createXYLineChart(title, xAxisLabel, yAxisLabel,
-                        createVectorDataset(xData, yData));
+                        createDataset(xData, yData), PlotOrientation.VERTICAL, false, false, false);
 
         VectorRenderer renderer = new VectorRenderer();
         chart.getXYPlot().setRenderer(renderer);
         ChartPanel chartPanel = new ChartPanel(chart);
-        chartPanel.setPreferredSize(new java.awt.Dimension(560, 367));
+        chartPanel.setPreferredSize(new java.awt.Dimension(3200, 2400));
         setContentPane(chartPanel);
         return chart;
     }
 
+    public XYDataset createDataset(double[] xData, double[] yData) {
+        VectorSeries vectorSeries = new VectorSeries("Vector Series");
+        for (int i = 0; i < xData.length - 1; i++) {
+            vectorSeries.add(xData[i], yData[i], xData[i + 1] - xData[i], yData[i + 1] - yData[i]);
+        }
+        VectorSeriesCollection dataSet = new VectorSeriesCollection();
+        dataSet.addSeries(vectorSeries);
+        return dataSet;
+    }
 
 }
