@@ -30,6 +30,7 @@ class HistChart extends Chart {
 
         ChartPanel chartPanel = new ChartPanel(chart);
         chartPanel.setPreferredSize(new java.awt.Dimension(3200, 2400));
+        chartPanel.setMouseWheelEnabled(true);
         setContentPane(chartPanel);
         saveAsFile(chart);
     }

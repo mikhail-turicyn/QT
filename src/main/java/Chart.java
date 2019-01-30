@@ -98,6 +98,7 @@ public class Chart extends ApplicationFrame {
     private void setPanelProps() {
         ChartPanel chartPanel = new ChartPanel(chart);
         chartPanel.setPreferredSize(new java.awt.Dimension(3200, 2400));
+        chartPanel.setMouseWheelEnabled(true);
         chartPanel.setDomainZoomable(true);
         chartPanel.setRangeZoomable(true);
         setContentPane(chartPanel);

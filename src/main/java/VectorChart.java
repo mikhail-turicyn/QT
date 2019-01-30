@@ -41,6 +41,7 @@ public class VectorChart extends Chart {
         chart.getXYPlot().setRenderer(renderer);
         ChartPanel chartPanel = new ChartPanel(chart);
         chartPanel.setPreferredSize(new java.awt.Dimension(3200, 2400));
+        chartPanel.setMouseWheelEnabled(true);
         setContentPane(chartPanel);
         return chart;
     }
