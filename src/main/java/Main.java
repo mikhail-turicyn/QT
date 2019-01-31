@@ -1,5 +1,6 @@
 
 import org.jfree.chart.axis.NumberTickUnit;
+import org.jfree.data.statistics.HistogramBin;
 import org.jfree.data.statistics.HistogramDataset;
 
 import javax.swing.*;
@@ -7,30 +8,36 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Main extends JFrame{
 
     private static final int SPLITCNT = 5;
     private static final Path pathToDataFile = Paths.get("/home/qq/ch1.csv");
-    static double[] tmpArr = new double[5000];
-    private static double[] arr = {9.5,9.03,9.9,7.6,7.7,8.9,8.01,7.6,7.9,7.5,6.6,6.3,5.5,3.3,2.1,1.1,1.11,1.2,1.9};
+    //    private static double[] arr = {9.5,9.03,9.9,7.6,7.7,8.9,8.01,7.6,7.9,7.5,6.6,6.3,5.5,3.3,2.1,1.1,1.11,1.2,1.9};
 //    private static double[] arr = {1.5, 1.7, 2.5, 2.7, 3.5, 3.7, 4.5, 4.7, 5.5, 1, 2, 3, 4, 5, 6};
-//private static double[] arr;
+    private static double[] arr;
 
     public static void main(String[] args) {
         fillData();
         FractalEstimation fr = new FractalEstimation(arr, SPLITCNT);
-        double[] ar = fr.getProbArray();
+//        double[] ar =
         double[] perc = fr.getPerc();
-        List list;
-        list = fr.addSeries();
-        System.out.println("here"+list);
+        Map series = fr.addSeries();
+        double len = (double) series.get("values.length");
+//        System.out.println("aaaaaaaaAAAAAAAA"+series.get("values.length"));
+        List<HistogramBin> binList = (ArrayList) series.get("bins");
+        for (HistogramBin bin : binList) {
+            System.out.println((double) bin.getCount() / len);
+        }
         System.out.println("трек перколяционной функции " + fr.getTrack(perc));
         System.out.println("delta: " + fr.epsilon);
         System.out.println("Геометрическая фрактальная размерность " + fr.bEntropy());
         System.out.println("Информационная фрактальная размерность " + fr.bEntropyInf());
-        fr.TestProbArray();
+//        fr.TestProbArray();
+        fr.TestProbArray2();
 
 
         HistChart histChart = new HistChart("Распределение значений", arr, SPLITCNT, "Распределение значений", "x, °C", "P(x)", null);
@@ -67,8 +74,11 @@ public class Main extends JFrame{
         VectorChart phaseGraph = new VectorChart("Фазовый портрет при delta=" + fr.epsilon, arr, perc, "x, °C", "P(t)", null);
         phaseGraph.pack();
         phaseGraph.setVisible(true);
+
+        int n = 50;
+        double[] tmpArr = new double[99 * n];
         for (int i = 0; i < 100; i++) {
-            fr.setSplitCnt((i + 1) * 50);
+            fr.setSplitCnt((i + 1) * n);
             tmpArr[i] = fr.bEntropy();
         }
         Chart c = new Chart("Энтропия-эпсилон", tmpArr, "", "число интервалов", "B энтропия", null);
@@ -78,12 +88,13 @@ public class Main extends JFrame{
 
     private static void fillData() {
         if (arr == null) {
-            loadDataFromFile();
+//            loadDataFromFile();
 //        } else {
-//                    for (int i = 0; i < arr.length; i++) {
-//            arr[i]= 2.5*Math.sin(2*Math.PI*i*0.001);
+            arr = new double[5000];
+            for (int i = 0; i < arr.length; i++) {
+                arr[i] = 2.5 * Math.sin(2 * Math.PI * i * 0.001);
 //            arr[i] =
-//        }
+            }
         }
     }
 

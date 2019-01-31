@@ -2,7 +2,10 @@ import org.jfree.chart.util.Args;
 import org.jfree.data.statistics.HistogramBin;
 import org.jfree.data.statistics.HistogramDataset;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class FractalEstimation {
     double epsilon;
@@ -10,7 +13,7 @@ public class FractalEstimation {
     private int splitCnt;
     private double max;
     private double min;
-    private List<Map<String, Object>> list;
+//    private List<Map<String, Object>> list;
 
     public FractalEstimation(double[] data, int splitCnt){
         this.data = data;
@@ -34,7 +37,7 @@ public class FractalEstimation {
         double[] prob = getProbArray();
         for (int i = 0; i < splitCnt; i++) {
             for (int j = 0; j < splitCnt; j++) {
-                tmpVal += (1 - rMetric(i, j)) * prob[j];
+                tmpVal += (1.0 - rMetric(i, j)) * prob[j];
             }
             res += prob[i] * Math.log(tmpVal);
         }
@@ -48,57 +51,87 @@ public class FractalEstimation {
         double[] prob = getProbArray();
         for (int i = 0; i < splitCnt; i++) {
             for (int j = 0; j < splitCnt; j++) {
-                tmpVal += (1 - Math.abs(prob[i] - prob[j])) * prob[j];
+                tmpVal += (1.0 - Math.abs(prob[i] - prob[j])) * prob[j];
             }
             res += prob[i] * Math.log(tmpVal);
         }
-//        System.out.println("B-entropy inf" + -res);
         return res / Math.log(epsilon);
     }
 
     public double[] getProbArray() {
         double[] res = new double[splitCnt];
-        double[] tmpData = Arrays.copyOf(data, data.length);
-        int curInt = 0;
-        int elCount = 0;
-        Arrays.sort(tmpData);
-        for (int i = 0; i < tmpData.length ; i++) {
-            if(tmpData[i] <= min + (double)(curInt+1)*epsilon){
-                elCount += 1;
-            } else {
-                res[curInt] = (double)(elCount) / (double)(data.length);
-                curInt += 1;
-                elCount = 1;
-            }
+//        double[] tmpData = Arrays.copyOf(data, data.length);
+//        int curInt = 0;
+//        int elCount = 0;
+//        Arrays.sort(tmpData);
+//        for (int i = 0; i < tmpData.length - 1 ; i++) {
+//            if(tmpData[i] < min + (double)(curInt+1)*epsilon){
+//                elCount += 1;
+//            } else {
+//                res[curInt] = (double)(elCount) / (double)(data.length);
+//                curInt += 1;
+//                elCount = 1;
+//            }
+//        }
+//        curInt -=1;
+//        res[curInt] = (double)(elCount+1) / (double)(data.length);
+        Map series = addSeries();
+        List<HistogramBin> binList = (ArrayList) series.get("bins");
+        int i = 0;
+        for (HistogramBin bin : binList) {
+            res[i] = (double) bin.getCount() / (double) series.get("values.length");
+            i++;
         }
-        res[curInt] = (double)(elCount) / (double)(data.length);
         return res;
     }
 
-    public double[] TestProbArray() {
+    public double[] TestProbArray2() {
         HistChart histChart = new HistChart("temp");
         HistogramDataset testSet = histChart.createDataset(data, splitCnt);
         double[] res = new double[splitCnt];
-        double[] tmpData = Arrays.copyOf(data, data.length);
+        Map series = addSeries();
+        List<HistogramBin> binList = (ArrayList) series.get("bins");
+        System.out.println(binList.size());
         int curInt = 0;
-        int elCount = 0;
-        Arrays.sort(tmpData);
-        for (int i = 0; i < tmpData.length - 1 ; i++) {
-            if(tmpData[i] < min + (double)(curInt+1)*epsilon){
-                elCount += 1;
-            } else {
-                res[curInt] = (double)(elCount) / (double)(data.length);
-                System.out.println("моя вероятность" + res[curInt] + "вероятность либы" + testSet.getY(0, curInt));
-                curInt += 1;
-                elCount = 1;
-            }
+//        for (int curInt = 0; curInt < binList.size(); curInt++) {
+        for (HistogramBin bin : binList) {
+            res[curInt] = (double) bin.getCount() / (double) series.get("values.length");
+            curInt++;
+            System.out.println("моя вероятность" + res[curInt] + "вероятность либы" + testSet.getY(0, curInt));
         }
-        res[curInt-1] = (double)(elCount+1) / (double)(data.length);
-        System.out.println("моя вероятность" + res[curInt-1] + "вероятность либы" + testSet.getY(0, curInt-1));
         return res;
     }
 
-    public List addSeries() {
+//    public BigDecimal[] TestProbArray() {
+//        HistChart histChart = new HistChart("temp");
+//        HistogramDataset testSet = histChart.createDataset(data, splitCnt);
+//        BigDecimal[] res = new BigDecimal[splitCnt];
+//        BigDecimal[] tmpData = new BigDecimal[data.length];
+//        for (int i = 0; i < tmpData.length; i++) {
+//            tmpData[i] = BigDecimal.valueOf(data[i]);
+//        }
+////        BigDecimal[] tmpData = Arrays.copyOf(BigDecimal.valueOf(data), data.length);
+//        int curInt = 0;
+//        int elCount = 0;
+//        Arrays.sort(tmpData);
+//        for (int i = 0; i < tmpData.length - 1 ; i++) {
+//            if(tmpData[i].compareTo(BigDecimal.valueOf(min + (double)(curInt+1)*epsilon)) == -1){
+//                elCount += 1;
+//            } else {
+//                res[curInt] = BigDecimal.valueOf((double)(elCount) / (double)(data.length));
+////                if (res[curInt] == testSet.getY(0, curInt))
+//                System.out.println("моя вероятность" + res[curInt] + "вероятность либы" + testSet.getY(0, curInt));
+//                curInt += 1;
+//                elCount = 1;
+//            }
+//        }
+//        curInt -=1;
+//        res[curInt] = BigDecimal.valueOf((double)(elCount+1) / (double)(data.length));
+//        System.out.println("моя вероятность" + res[curInt] + "вероятность либы" + testSet.getY(0, curInt));
+//        return res;
+//    }
+
+    public Map addSeries() {
         Comparable key = "bar";
         Args.nullNotPermitted(key, "key");
         Args.nullNotPermitted(data, "values");
@@ -138,40 +171,38 @@ public class FractalEstimation {
                 }
 
                 HistogramBin bin = (HistogramBin) binList.get(binIndex);
-                System.out.println("bin with " + bin.getBinWidth() + " bin count " + bin.getCount() + " start" + bin.getStartBoundary() + " end" + bin.getEndBoundary());
+//                System.out.println("bin with " + bin.getBinWidth() + " bin count " + bin.getCount() + " start" + bin.getStartBoundary() + " end" + bin.getEndBoundary());
                 bin.incrementCount();
             }
-//            (HistogramBin)binList.get(1).
-//            for(HistogramBin el:binList){
-//                System.out.println(el.getStartBoundary());
-//            }
 
             Map map = new HashMap();
             map.put("key", key);
             map.put("bins", binList);
-            map.put("values.length", new Integer(data.length));
-            map.put("bin width", new Double(binWidth));
-            List list = new ArrayList();
-            list.add(map);
-            return list;
+            map.put("values.length", (double) data.length);
+            map.put("bin width", binWidth);
+//            List list = new ArrayList();
+//            list.add(map);
+            return map;
         }
     }
 
     private double rMetric(int curInt, int prevInt) {
-        return Math.abs(epsilon * (curInt - prevInt)) / Math.abs(max - min);
+        return Math.abs(epsilon * (double) (curInt - prevInt)) / Math.abs(max - min);
     }
 
     public double[] getPerc() {
         double[] res = new double[data.length];
-//        int curr = (int) (data[0] / epsilon);
-//        int next = 0;
         for (int i = 0; i < data.length - 1; i++) {
-//            next = (int) (data[i + 1] / epsilon);
-//            res[i] = next - curr;
-//            curr = next;
             res[i] = (int) ((data[i + 1] - data[i]) / epsilon);
         }
-//        res[data.length - 1] = (int) (data[data.length - 1] / epsilon) - (int) (data[0] / epsilon);
+        return res;
+    }
+
+    public int[] getPerc(int dummy) {
+        int[] res = new int[data.length];
+        for (int i = 0; i < data.length - 1; i++) {
+            res[i] = (int) ((data[i + 1] - data[i]) / epsilon);
+        }
         return res;
     }
 
