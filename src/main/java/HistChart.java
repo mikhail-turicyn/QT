@@ -8,13 +8,16 @@ import org.jfree.data.statistics.HistogramDataset;
 import static org.jfree.data.statistics.HistogramType.RELATIVE_FREQUENCY;
 
 class HistChart extends Chart {
+
     public HistChart(String appTitle,
                      double[] data,
                      int splitCnt,
                      String chartTitle) {
         this(appTitle, data, splitCnt, chartTitle, "", "", null);
     }
-
+    public HistChart(String appTitle){
+        super(appTitle);
+    }
     HistChart(String appTitle,
               double[] data,
               int splitCnt,

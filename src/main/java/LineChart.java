@@ -35,6 +35,7 @@ class LineChart extends ApplicationFrame {
         }
         ChartPanel chartPanel = new ChartPanel(lineChart);
         chartPanel.setPreferredSize(new java.awt.Dimension(560, 367));
+        chartPanel.setMouseWheelEnabled(true);
         chartPanel.setDomainZoomable(true);
         chartPanel.setRangeZoomable(true);
         setContentPane(chartPanel);

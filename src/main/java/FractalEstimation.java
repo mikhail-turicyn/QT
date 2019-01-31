@@ -1,5 +1,6 @@
 import org.jfree.chart.util.Args;
 import org.jfree.data.statistics.HistogramBin;
+import org.jfree.data.statistics.HistogramDataset;
 
 import java.util.*;
 
@@ -69,6 +70,28 @@ public class FractalEstimation {
                 curInt += 1;
                 res[curInt] += 1;
              }
+        }
+        res[curInt] = res[curInt]/data.length;
+        return res;
+    }
+
+    public double[] TestProbArray() {
+        HistChart histChart = new HistChart("temp");
+        HistogramDataset testSet = histChart.createDataset(data, splitCnt);
+        double[] res = new double[splitCnt];
+        double[] tmpData = Arrays.copyOf(data, data.length);
+        int curInt = 0;
+        int elCount = 0;
+        Arrays.sort(tmpData);
+        for (int i = 0; i < tmpData.length ; i++) {
+            if(tmpData[i] <= min + (double)(curInt+1)*epsilon){
+                elCount += 1;
+            } else {
+                res[curInt] = (double)(elCount) / (double)(data.length);
+                System.out.println("моя вероятность" + res[curInt] + "вероятность либы" + testSet.getY(0, curInt));
+                curInt += 1;
+                elCount = 1;
+            }
         }
         res[curInt] = res[curInt]/data.length;
         return res;
@@ -154,8 +177,11 @@ public class FractalEstimation {
     public int getTrack(double[] data) {
         int res = 0;
         for (int i = 0; i < data.length; i++) {
-            if (Math.abs(data[i]) > 0)
+            if (Math.abs(data[i]) > 0){
                 res += Math.abs(data[i]);
+            }else{
+                res += 1;
+            }
         }
         return res;
     }

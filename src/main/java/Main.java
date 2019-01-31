@@ -1,5 +1,6 @@
 
 import org.jfree.chart.axis.NumberTickUnit;
+import org.jfree.data.statistics.HistogramDataset;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -11,35 +12,36 @@ import java.util.List;
 
 public class Main extends JFrame{
 
-    private static final int SPLITCNT = 50;
+    private static final int SPLITCNT = 5;
     private static final Path pathToDataFile = Paths.get("/home/qq/ch1.csv");
     static double[] tmpArr = new double[5000];
-//    private static double[] arr = {9.5,9.03,9.9,7.6,7.7,8.9,8.01,7.6,7.9,7.5,6.6,6.3,5.5,3.3,2.1,1.1,1.11,1.2,1.9};
+    private static double[] arr = {9.5,9.03,9.9,7.6,7.7,8.9,8.01,7.6,7.9,7.5,6.6,6.3,5.5,3.3,2.1,1.1,1.11,1.2,1.9};
 //    private static double[] arr = {1.5, 1.7, 2.5, 2.7, 3.5, 3.7, 4.5, 4.7, 5.5, 1, 2, 3, 4, 5, 6};
-private static double[] arr;
+//private static double[] arr;
 
     public static void main(String[] args) {
-        List<String> v = new ArrayList<>();
-        v.add("A");
-        v.add("B12");
-        v.add("C");
-        v.set(1, "B");
-        v.add(1, "D");
-        System.out.println(v);
         fillData();
         FractalEstimation fr = new FractalEstimation(arr, SPLITCNT);
         double[] ar = fr.getProbArray();
         double[] perc = fr.getPerc();
         List list;
         list = fr.addSeries();
-        System.out.println(list);
+        System.out.println("here"+list);
         System.out.println("трек перколяционной функции " + fr.getTrack(perc));
         System.out.println("delta: " + fr.epsilon);
         System.out.println("Геометрическая фрактальная размерность " + fr.bEntropy());
         System.out.println("Информационная фрактальная размерность " + fr.bEntropyInf());
+        fr.TestProbArray();
 
 
         HistChart histChart = new HistChart("Распределение значений", arr, SPLITCNT, "Распределение значений", "x, °C", "P(x)", null);
+        HistogramDataset testSet = histChart.createDataset(arr, SPLITCNT);
+////        List bins= testSet.getX(1,1);
+//        testSet.getXValue();
+//        testSet.get
+        for (int i = 0; i < SPLITCNT; i++) {
+//            System.out.printf("bin count real %s %s%n", testSet.getX(0, i), testSet.getY(0, i));
+        }
         histChart.pack();
         histChart.setVisible(true);
 
