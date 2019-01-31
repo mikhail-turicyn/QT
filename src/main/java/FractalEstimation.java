@@ -93,7 +93,8 @@ public class FractalEstimation {
                 elCount = 1;
             }
         }
-        res[curInt] = res[curInt]/data.length;
+        res[curInt] = (double)(elCount) / (double)(data.length);
+        System.out.println("моя вероятность" + res[curInt] + "вероятность либы" + testSet.getY(0, curInt));
         return res;
     }
 
