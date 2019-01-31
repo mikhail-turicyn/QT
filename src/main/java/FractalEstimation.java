@@ -62,16 +62,16 @@ public class FractalEstimation {
         int curInt = 0;
         int elCount = 0;
         Arrays.sort(tmpData);
-        for (double el : tmpData) {
-            if(el <= min + (double)(curInt+1)*epsilon){
+        for (int i = 0; i < tmpData.length ; i++) {
+            if(tmpData[i] <= min + (double)(curInt+1)*epsilon){
                 elCount += 1;
-             } else {
-                res[curInt] = elCount / data.length;
+            } else {
+                res[curInt] = (double)(elCount) / (double)(data.length);
                 curInt += 1;
-                res[curInt] += 1;
-             }
+                elCount = 1;
+            }
         }
-        res[curInt] = res[curInt]/data.length;
+        res[curInt] = (double)(elCount) / (double)(data.length);
         return res;
     }
 
@@ -83,8 +83,8 @@ public class FractalEstimation {
         int curInt = 0;
         int elCount = 0;
         Arrays.sort(tmpData);
-        for (int i = 0; i < tmpData.length ; i++) {
-            if(tmpData[i] <= min + (double)(curInt+1)*epsilon){
+        for (int i = 0; i < tmpData.length - 1 ; i++) {
+            if(tmpData[i] < min + (double)(curInt+1)*epsilon){
                 elCount += 1;
             } else {
                 res[curInt] = (double)(elCount) / (double)(data.length);
@@ -93,8 +93,8 @@ public class FractalEstimation {
                 elCount = 1;
             }
         }
-        res[curInt] = (double)(elCount) / (double)(data.length);
-        System.out.println("моя вероятность" + res[curInt] + "вероятность либы" + testSet.getY(0, curInt));
+        res[curInt-1] = (double)(elCount+1) / (double)(data.length);
+        System.out.println("моя вероятность" + res[curInt-1] + "вероятность либы" + testSet.getY(0, curInt-1));
         return res;
     }
 
