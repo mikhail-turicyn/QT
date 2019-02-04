@@ -2,20 +2,21 @@ import org.jfree.chart.util.Args;
 import org.jfree.data.statistics.HistogramBin;
 import org.jfree.data.statistics.HistogramDataset;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class FractalEstimation {
-    double epsilon;
+public class TestFractalEstimation {
+    BigDecimal epsilon;
     private double[] data;
     private int splitCnt;
     private double max;
     private double min;
 //    private List<Map<String, Object>> list;
 
-    public FractalEstimation(double[] data, int splitCnt){
+    public FractalEstimation(double[] data, int splitCnt) {
         this.data = data;
         this.splitCnt = splitCnt;
         this.max = getMaximum();
@@ -23,7 +24,7 @@ public class FractalEstimation {
         this.epsilon = (max - min) / splitCnt;
     }
 
-    public FractalEstimation(double[] data, double epsilon){
+    public FractalEstimation(double[] data, double epsilon) {
         this.data = data;
         this.epsilon = epsilon;
         this.max = getMaximum();
@@ -42,7 +43,7 @@ public class FractalEstimation {
             res += prob[i] * Math.log(tmpVal);
         }
 //        System.out.println("B-entropy geometrical " + -res);
-        return res/ Math.log(epsilon);
+        return res / Math.log(epsilon.doubleValue());
     }
 
     double bEntropyInf() {
@@ -208,9 +209,9 @@ public class FractalEstimation {
     public int getTrack(double[] data) {
         int res = 0;
         for (int i = 0; i < data.length; i++) {
-            if (Math.abs(data[i]) > 0){
+            if (Math.abs(data[i]) > 0) {
                 res += Math.abs(data[i]);
-            }else{
+            } else {
                 res += 1;
             }
         }

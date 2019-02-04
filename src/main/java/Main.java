@@ -14,9 +14,9 @@ import java.util.Map;
 
 public class Main extends JFrame{
 
-    private static final int SPLITCNT = 5;
+    private static final int SPLITCNT = 500;
     private static final Path pathToDataFile = Paths.get("/home/qq/ch1.csv");
-    //    private static double[] arr = {9.5,9.03,9.9,7.6,7.7,8.9,8.01,7.6,7.9,7.5,6.6,6.3,5.5,3.3,2.1,1.1,1.11,1.2,1.9};
+    //        private static double[] arr = {9.5,9.03,9.9,7.6,7.7,8.9,8.01,7.6,7.9,7.5,6.6,6.3,5.5,3.3,2.1,1.1,1.11,1.2,1.9};
 //    private static double[] arr = {1.5, 1.7, 2.5, 2.7, 3.5, 3.7, 4.5, 4.7, 5.5, 1, 2, 3, 4, 5, 6};
     private static double[] arr;
 
@@ -27,7 +27,6 @@ public class Main extends JFrame{
         double[] perc = fr.getPerc();
         Map series = fr.addSeries();
         double len = (double) series.get("values.length");
-//        System.out.println("aaaaaaaaAAAAAAAA"+series.get("values.length"));
         List<HistogramBin> binList = (ArrayList) series.get("bins");
         for (HistogramBin bin : binList) {
             System.out.println((double) bin.getCount() / len);
@@ -88,8 +87,8 @@ public class Main extends JFrame{
 
     private static void fillData() {
         if (arr == null) {
-//            loadDataFromFile();
-//        } else {
+            loadDataFromFile();
+        } else {
             arr = new double[5000];
             for (int i = 0; i < arr.length; i++) {
                 arr[i] = 2.5 * Math.sin(2 * Math.PI * i * 0.001);
