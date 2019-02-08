@@ -1,52 +1,52 @@
-
 import org.jfree.chart.axis.NumberTickUnit;
-import org.jfree.data.statistics.HistogramBin;
-import org.jfree.data.statistics.HistogramDataset;
 
 import javax.swing.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.text.DecimalFormat;
 
-public class Main extends JFrame{
+public class Main extends JFrame {
 
-    private static final int SPLITCNT = 500;
+    private static final int SPLITCNT = 60;
     private static final Path pathToDataFile = Paths.get("/home/qq/ch1.csv");
-    //        private static double[] arr = {9.5,9.03,9.9,7.6,7.7,8.9,8.01,7.6,7.9,7.5,6.6,6.3,5.5,3.3,2.1,1.1,1.11,1.2,1.9};
-//    private static double[] arr = {1.5, 1.7, 2.5, 2.7, 3.5, 3.7, 4.5, 4.7, 5.5, 1, 2, 3, 4, 5, 6};
-    private static double[] arr;
+    private static boolean isloadFromFle = false;
+    //    private static double[] arr = {9.5,9.03,9.9,7.6,7.7,8.9,8.01,7.6,7.9,7.5,6.6,6.3,5.5,3.3,2.1,1.1,1.11,1.2,1.9};
+    private static double[] arr = {1.5, 1.7, 2.5, 2.7, 3.5, 3.7, 4.5, 4.7, 5.5, 1, 2, 3, 4, 5, 6};
+//    private static double[] arr;
 
     public static void main(String[] args) {
+        entropy();
         fillData();
         FractalEstimation fr = new FractalEstimation(arr, SPLITCNT);
-//        double[] ar =
+
         double[] perc = fr.getPerc();
-        Map series = fr.addSeries();
-        double len = (double) series.get("values.length");
-        List<HistogramBin> binList = (ArrayList) series.get("bins");
-        for (HistogramBin bin : binList) {
-            System.out.println((double) bin.getCount() / len);
-        }
+//        Map series = fr.addSeries();
+//        double len = (double) series.get("values.length");
+//        List<HistogramBin> binList = (ArrayList) series.get("bins");
+//        for (HistogramBin bin : binList) {
+//            System.out.println((double) bin.getCount() / len);
+//        }
         System.out.println("трек перколяционной функции " + fr.getTrack(perc));
-        System.out.println("delta: " + fr.epsilon);
+        System.out.println("delta: " + fr.getEpsilon());
         System.out.println("Геометрическая фрактальная размерность " + fr.bEntropy());
         System.out.println("Информационная фрактальная размерность " + fr.bEntropyInf());
 //        fr.TestProbArray();
-        fr.TestProbArray2();
+//        fr.TestProbArray2();
 
 
         HistChart histChart = new HistChart("Распределение значений", arr, SPLITCNT, "Распределение значений", "x, °C", "P(x)", null);
-        HistogramDataset testSet = histChart.createDataset(arr, SPLITCNT);
+//        HistogramDataset testSet = histChart.createDataset(arr, SPLITCNT);
 ////        List bins= testSet.getX(1,1);
 //        testSet.getXValue();
 //        testSet.get
-        for (int i = 0; i < SPLITCNT; i++) {
+//        for (int i = 0; i < SPLITCNT; i++) {
 //            System.out.printf("bin count real %s %s%n", testSet.getX(0, i), testSet.getY(0, i));
-        }
+//        }
         histChart.pack();
         histChart.setVisible(true);
 
@@ -54,7 +54,7 @@ public class Main extends JFrame{
         timeLine.pack();
         timeLine.setVisible(true);
 
-        Chart perkGraph = new Chart("Перколяции при delta=" + fr.epsilon, perc, "", "номер измерения", "P(t)", new NumberTickUnit(1));
+        Chart perkGraph = new Chart("Перколяции при delta=" + fr.getEpsilon(), perc, "", "номер измерения", "P(t)", new NumberTickUnit(1));
         perkGraph.pack();
         perkGraph.setVisible(true);
 
@@ -66,19 +66,19 @@ public class Main extends JFrame{
             else
                 percE[i] = percE[i - 1];
         }
-        Chart perkEGraph = new Chart("Перколяции с накоплением при delta=" + fr.epsilon, percE, "", "номер измерения", "P(t)", new NumberTickUnit(1));
+        Chart perkEGraph = new Chart("Перколяции с накоплением при delta=" + fr.getEpsilon(), percE, "", "номер измерения", "P(t)", new NumberTickUnit(1));
         perkEGraph.pack();
         perkEGraph.setVisible(true);
 
-        VectorChart phaseGraph = new VectorChart("Фазовый портрет при delta=" + fr.epsilon, arr, perc, "x, °C", "P(t)", null);
+        VectorChart phaseGraph = new VectorChart("Фазовый портрет при delta=" + fr.getEpsilon(), arr, perc, "x, °C", "P(t)", null);
         phaseGraph.pack();
         phaseGraph.setVisible(true);
 
-        int n = 50;
-        double[] tmpArr = new double[99 * n];
-        for (int i = 0; i < 100; i++) {
+        int n = 37;
+        double[] tmpArr = new double[n];
+        for (int i = 0; i < n; i++) {
             fr.setSplitCnt((i + 1) * n);
-            tmpArr[i] = fr.bEntropy();
+            tmpArr[i] = fr.bEntropyInf();
         }
         Chart c = new Chart("Энтропия-эпсилон", tmpArr, "", "число интервалов", "B энтропия", null);
         c.pack();
@@ -86,13 +86,12 @@ public class Main extends JFrame{
     }
 
     private static void fillData() {
-        if (arr == null) {
+        if (isloadFromFle) {
             loadDataFromFile();
-        } else {
+        } else if (arr == null) {
             arr = new double[5000];
             for (int i = 0; i < arr.length; i++) {
                 arr[i] = 2.5 * Math.sin(2 * Math.PI * i * 0.001);
-//            arr[i] =
             }
         }
     }
@@ -124,4 +123,52 @@ public class Main extends JFrame{
 
     }
 
+    private static void entropy() {
+        File file = new File("/home/qq/ch1.csv");
+        FileInputStream fin = null;
+        try {
+            fin = new FileInputStream(file);
+
+            byte fileContent[] = new byte[(int) file.length()];
+
+            // Read data into the byte array
+            fin.read(fileContent);
+
+            // create array to keep track of frequency of bytes
+            int[] frequency_array = new int[256];
+            int fileContentLength = fileContent.length - 1;
+
+            // count frequency of occuring bytes
+            for (int i = 0; i < fileContentLength; i++) {
+                byte byteValue = fileContent[i];
+                frequency_array[byteValue]++;
+            }
+
+
+            double entropy = 0;
+            for (int i = 0; i < frequency_array.length; i++) {
+                if (frequency_array[i] != 0) {
+                    // calculate the probability of a particular byte occuring
+                    double probabilityOfByte = (double) frequency_array[i] / (double) fileContentLength;
+
+                    // calculate the next value to sum to previous entropy calculation
+                    double value = probabilityOfByte * (Math.log(probabilityOfByte) / Math.log(2));
+                    entropy = entropy + value;
+                } else {
+                }
+            }
+            entropy *= -1;
+
+            // output the entropy calculated
+            DecimalFormat df = new DecimalFormat("#.#####");
+            System.out.println("Entropy is: " + df.format(entropy) + " bits per byte");
+            fin.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found" + e);
+        } catch (IOException ioe) {
+            System.out.println("Exception while reading file " + ioe);
+        }
+
+
+    }
 }
