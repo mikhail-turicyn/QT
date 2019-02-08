@@ -12,11 +12,11 @@ import java.text.DecimalFormat;
 
 public class Main extends JFrame {
 
-    private static final int SPLITCNT = 60;
-    private static final Path pathToDataFile = Paths.get("/home/qq/ch1.csv");
+    private static final int SPLITCNT = 6;
+    private static final Path pathToDataFile = Paths.get("Книга1.csv");
     private static boolean isloadFromFle = false;
-    //    private static double[] arr = {9.5,9.03,9.9,7.6,7.7,8.9,8.01,7.6,7.9,7.5,6.6,6.3,5.5,3.3,2.1,1.1,1.11,1.2,1.9};
-    private static double[] arr = {1.5, 1.7, 2.5, 2.7, 3.5, 3.7, 4.5, 4.7, 5.5, 1, 2, 3, 4, 5, 6};
+        private static double[] arr = {9.5,9.03,9.9,7.6,7.7,8.9,8.01,7.6,7.9,7.5,6.6,6.3,5.5,3.3,2.1,1.1,1.11,1.2,1.9};
+//    private static double[] arr = {1.5, 1.7, 2.5, 2.7, 3.5, 3.7, 4.5, 4.7, 5.5, 1, 2, 3, 4, 5, 6};
 //    private static double[] arr;
 
     public static void main(String[] args) {
@@ -25,6 +25,9 @@ public class Main extends JFrame {
         FractalEstimation fr = new FractalEstimation(arr, SPLITCNT);
 
         double[] perc = fr.getPerc();
+        for (double q : perc) {
+            System.out.println("perc " + q);
+        }
 //        Map series = fr.addSeries();
 //        double len = (double) series.get("values.length");
 //        List<HistogramBin> binList = (ArrayList) series.get("bins");
@@ -32,6 +35,10 @@ public class Main extends JFrame {
 //            System.out.println((double) bin.getCount() / len);
 //        }
         System.out.println("трек перколяционной функции " + fr.getTrack(perc));
+        fr.getAgregates(arr);
+        for (Agregate el : fr.getAgregates(arr)) {
+            System.out.println("agregate " + el.start + " " + el.width);
+        }
         System.out.println("delta: " + fr.getEpsilon());
         System.out.println("Геометрическая фрактальная размерность " + fr.bEntropy());
         System.out.println("Информационная фрактальная размерность " + fr.bEntropyInf());
@@ -74,9 +81,9 @@ public class Main extends JFrame {
         phaseGraph.pack();
         phaseGraph.setVisible(true);
 
-        int n = 37;
-        double[] tmpArr = new double[n];
-        for (int i = 0; i < n; i++) {
+        int n = 1;
+        double[] tmpArr = new double[n*10];
+        for (int i = 0; i < n*10; i++) {
             fr.setSplitCnt((i + 1) * n);
             tmpArr[i] = fr.bEntropyInf();
         }
