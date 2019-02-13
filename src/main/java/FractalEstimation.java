@@ -249,34 +249,43 @@ public class FractalEstimation {
         return res;
     }
 
-    public int getAgregates(double[] percolationArray) {
+    public List<Agregate> getAgregates(double[] dataArray) {
         List resList = new ArrayList();
-        int res = 0;
-        for (int i = 0; i < percolationArray.length; i++) {
-            if (Math.abs(percolationArray[i]) > 0) {
-                res += Math.abs(percolationArray[i]);
+        Agregate a = new Agregate(0, 0);
+        for (int i = 0; i < dataArray.length - 1; i++) {
+            if (Math.abs(data[i] - data[i + 1]) < epsilon) {
+                a.setEnd(a.getEnd() + 1);
             } else {
-                res += 1;
-            }
-            double binWidth = spread / (double) splitCnt;
-            double lower = min;
-            List binList = new ArrayList(splitCnt);
-
-//            int i;
-            for (i = 0; i < splitCnt; ++i) {
-                HistogramBin bin;
-                if (i == splitCnt - 1) {
-                    bin = new HistogramBin(lower, max);
-                } else {
-                    double upper = min + (double) (i + 1) * binWidth;
-                    bin = new HistogramBin(lower, upper);
-                    lower = upper;
-                }
-
-                binList.add(bin);
+                a.setEnd(a.getEnd() - 1);
+                if (a.getEnd() > 0)
+                    resList.add(a);
+                a = new Agregate(i + 1, 0);
             }
         }
-        return res;
+        if (a.getEnd() > 0)
+            resList.add(a);
+        return resList;
+    }
+
+    public List<Agregate> getPercAgregates(double[] dataArray) {
+        List resList = new ArrayList();
+        Agregate a = new Agregate(0, 0);
+        int prev = 0;
+        int curr;
+        for (int i = 0; i < dataArray.length - 1; i++) {
+            curr = (int) ((data[i] - data[i + 1]) / epsilon);
+            if (curr == prev) {
+                a.setEnd(i);
+            } else {
+                if (a.getEnd() > 0)
+                    resList.add(a);
+                a = new Agregate(i, 0);
+            }
+            prev = curr;
+        }
+        if (a.getEnd() > 0)
+            resList.add(a);
+        return resList;
     }
 
     private double getMinimum() {
