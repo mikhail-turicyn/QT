@@ -13,9 +13,9 @@ import java.text.DecimalFormat;
 public class Main extends JFrame {
 
     private static final int SPLITCNT = 60;
-    private static final Path pathToDataFile = Paths.get("/home/qq/ch1.csv");
+    private static final Path pathToDataFile = Paths.get("D:\\Download\\MITuritsyn\\ch1.csv");
     private static boolean isloadFromFle = true;
-    //        private static double[] arr = {9.5,9.03,9.9,7.6,7.7,8.9,8.01,7.6,7.9,7.5,6.6,6.3,5.5,3.3,2.1,1.1,1.11,1.2,1.9};
+//            private static double[] arr = {9.5,9.03,9.9,7.6,7.7,8.9,8.01,7.6,7.9,7.5,6.6,6.3,5.5,3.3,2.1,1.1,1.11,1.2,1.9};
     private static double[] arr = {1.5, 1.7, 2.5, 2.7, 3.5, 3.7, 4.5, 4.7, 5.5, 1, 2, 3, 4, 5, 6};
 //    private static double[] arr;
 
@@ -36,10 +36,19 @@ public class Main extends JFrame {
 
         for (Agregate el : fr.getAgregates(arr)) {
             System.out.println("agregate " + el.start + " " + el.end);
+            double[] tmp = new double[arr.length];
+            for (int i = 0; i < el.end; i++) {
+                tmp[i] = arr[el.start+i];
+            }
+            double max = fr.getMaximum(tmp);
+            double min = fr.getMinimum(tmp);
+            
+            int spread = (int)((max - min)/fr.getEpsilon());
+            System.out.println("spread " + spread);        
         }
 
         for (Agregate el : fr.getPercAgregates(arr)) {
-            System.out.println("perc agregate " + el.start + " " + el.end);
+            System.out.println("perc agregate " + el.start + " " + el.end );
         }
 
         System.out.println("delta: " + fr.getEpsilon());
